@@ -1,6 +1,6 @@
 package com.termjob.profileanalyzer.config.kafka;
 
-import com.termjob.profileanalyzer.model.Account;
+import com.termjob.profileanalyzer.model.GitHubModel;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -17,22 +17,22 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class KafkaConfig {
+public class KafkaConsumerConfig {
 
     @Bean
-    public ConsumerFactory<String, Account> accountConsumerFactory(){
+    public ConsumerFactory<String, GitHubModel> githubConsumerFactory(){
         Map<String,Object> map = new HashMap<>();
-        map.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
-        map.put(ConsumerConfig.GROUP_ID_CONFIG, "groupjson");
+        map.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+        map.put(ConsumerConfig.GROUP_ID_CONFIG, "github");
         map.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         map.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(map, new StringDeserializer(), new JsonDeserializer<>(Account.class));
+        return new DefaultKafkaConsumerFactory<>(map, new StringDeserializer(), new JsonDeserializer<>(GitHubModel.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,Account> kafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String,Account> kafkaListenerContainerFactory= new ConcurrentKafkaListenerContainerFactory<>();
-        kafkaListenerContainerFactory.setConsumerFactory(accountConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String,GitHubModel> kafkaListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<String,GitHubModel> kafkaListenerContainerFactory= new ConcurrentKafkaListenerContainerFactory<>();
+        kafkaListenerContainerFactory.setConsumerFactory(githubConsumerFactory());
         return kafkaListenerContainerFactory;
     }
 }
